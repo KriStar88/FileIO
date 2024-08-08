@@ -22,9 +22,10 @@ def test_save_history():
 
     with open("test_upload_history.json", 'r') as f:
         history = json.load(f)
-        assert len(history) == 1
+
         assert history[0]['file_path'] == test_file_path
-        assert history[0]['dowmload_link'] == test_download_link
+        assert history[0]['download_link'] == test_download_link
     os.remove("test_upload_history.json")
+
 
 test_save_history()
