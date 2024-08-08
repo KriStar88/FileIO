@@ -1,8 +1,9 @@
 from tkinter import *
 from tkinter import filedialog as fd
 from tkinter import ttk
-from tkinter import messagebox as mb
+from  tkinter import messagebox as mb
 import requests
+import pyperclip
 
 
 def upload():
@@ -10,18 +11,16 @@ def upload():
         filepath = fd.askopenfilename()
         if filepath:
             with open(filepath, 'rb') as f:
-                files = {"file": f}
+                files = {"file": open(filepath, 'rb')}
                 response = requests.post("http://file.io", files=files)
                 response.raise_for_status()
-                link = response.json().get('link')
-                if link:
-                    entry.delete(0, END)
-                    entry.insert(0, link)
-                else:
-                    raise ValueError("Не удалось получить ссылку")
+                link = response.json()['link']
+                entry.delete(0, END)
+                entry.insert(0, link)
+                pyperclip.copy(link)
+                mb.showinfo("Ссылка скопирована", f"Ссылка {link} успешно скопирована в буфер обмена")
     except Exception as e:
         mb.showerror("Ошибка", f"произошла ошибка: {e}")
-
 
 window = Tk()
 window.title("Сохранение файла в облаке")
@@ -30,5 +29,4 @@ button = ttk.Button(text="Загрузить файл", command=upload)
 button.pack()
 entry = ttk.Entry()
 entry.pack()
-
 window.mainloop()
